@@ -63,3 +63,37 @@ exports.generateDailyInsights = async (metrics, previousMetrics) => {
         ];
     }
 };
+
+exports.analyzeConversationOutcome = async (transcript) => {
+    try {
+        const prompt = `
+        Analyze the following chat conversation between a bot/agent and a lead (user).
+        Determine the final outcome, drop reason (if applicable), primary intent of the user, and overall sentiment.
+        
+        Transcript:
+        ${transcript}
+
+        Output JSON format:
+        {
+            "outcome": "Booking" | "QL" | "Drop" | "Ghost" | "Other",
+            "drop_reason": "Price" | "Not Interested" | "Competitor" | "No Response" | "N/A" | "Other",
+            "primary_intent": "Inquiry" | "Booking" | "Complaint" | "Support",
+            "sentiment": "Positive" | "Neutral" | "Negative"
+        }
+        `;
+
+        const response = await client.models.generateContent({
+            model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            config: {
+                responseMimeType: "application/json"
+            }
+        });
+
+        return JSON.parse(response.text());
+
+    } catch (error) {
+        console.error("Gemini Conversation Analysis Failed:", error);
+        return null;
+    }
+};

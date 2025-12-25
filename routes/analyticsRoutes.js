@@ -9,4 +9,7 @@ router.post('/compute', auth, analyticsController.computeDailyMetrics);
 // Get metrics for dashboard
 router.get('/', auth, analyticsController.getMetrics);
 
+// Get report data (custom range)
+router.post('/report', auth, analyticsController.getReportData);
+
 module.exports = router;

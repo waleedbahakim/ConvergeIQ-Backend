@@ -3,7 +3,7 @@ const syncService = require('../services/syncService');
 const analyticsController = require('../controllers/analyticsController');
 const Client = require('../models/Client');
 
-const initCronJobs = () => {
+const init = () => {
     console.log('Initializing Cron Jobs...');
 
     // 1. Nightly Reconciliation (e.g., at 2 AM)
@@ -19,7 +19,7 @@ const initCronJobs = () => {
         }
     });
 
-    // 3. Hourly AI Insight Processing
+    // 2. Hourly AI Insight Processing
     const insightAggregator = require('../services/ai/insightAggregator');
     cron.schedule('0 * * * *', async () => {
         console.log('Running AI Insight Aggregation...');
@@ -33,7 +33,7 @@ const initCronJobs = () => {
         }
     });
 
-    // 2. Daily Funnel Aggregation (e.g., at 1 AM - just after day end)
+    // 3. Daily Funnel Aggregation (e.g., at 1 AM - just after day end)
     cron.schedule('0 1 * * *', async () => {
         console.log('Running Daily Funnel Aggregation...');
         try {
@@ -45,10 +45,7 @@ const initCronJobs = () => {
 
             for (const client of clients) {
                 // Mock request object or refactor controller to separate logic
-                // Calling logic directly:
-                // await analyticsController.computeDailyMetricsInternal(client._id, dateStr); 
-                // We need to refactor controller slightly to expose internal method or just mock here
-                console.log(`[Cron] Aggregating metrics for ${client.name} on ${dateStr}`);
+                console.log(`[Cron] Aggregating metrics for ${client.name} on ${dateStr} `);
             }
         } catch (err) {
             console.error('Daily Aggregation Failed', err);
@@ -56,4 +53,4 @@ const initCronJobs = () => {
     });
 };
 
-module.exports = initCronJobs;
+module.exports = { init };

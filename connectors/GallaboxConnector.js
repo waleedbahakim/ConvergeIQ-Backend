@@ -16,29 +16,42 @@ class GallaboxConnector extends BaseConnector {
         };
     }
 
-    async fetchConversations(from, to) {
-        // Mocking the implementation as we don't have real Keys
-        console.log(`[Gallabox] Fetching conversations from ${from} to ${to}`);
-        // In real impl:
-        // const response = await axios.get(`${this.baseUrl}/conversations`, { headers: this.headers, params: { from, to } });
-        // return response.data;
+    async fetchConversations(days = 1) {
+        try {
+            // Calculate timestamps
+            const toDate = new Date();
+            const fromDate = new Date();
+            fromDate.setDate(toDate.getDate() - days);
 
-        return [
-            { id: 'conv_123', status: 'open', created_at: new Date().toISOString() },
-            { id: 'conv_456', status: 'resolved', created_at: new Date().toISOString() }
-        ];
+            // Convert to UNIX timestamp if API requires, or ISO. Gallabox usually prefers ISO or explicit params.
+            // Using standard params based on typical integration
+            const params = {
+                from: fromDate.toISOString(),
+                to: toDate.toISOString(),
+                limit: 100
+            };
+
+            const response = await axios.get(`${this.baseUrl}/conversations`, {
+                headers: this.headers,
+                params
+            });
+            return response.data;
+        } catch (error) {
+            console.error('[Gallabox] Fetch Conversations Failed:', error.response?.data || error.message);
+            return [];
+        }
     }
 
     async fetchMessages(conversationId) {
-        console.log(`[Gallabox] Fetching messages for ${conversationId}`);
-        // In real impl:
-        // const response = await axios.get(`${this.baseUrl}/conversations/${conversationId}/messages`, { headers: this.headers });
-        // return response.data;
-
-        return [
-            { id: 'msg_1', type: 'text', sender: { type: 'bot' }, text: 'Hello!', timestamp: new Date() },
-            { id: 'msg_2', type: 'text', sender: { type: 'user' }, text: 'Hi price?', timestamp: new Date() }
-        ];
+        try {
+            const response = await axios.get(`${this.baseUrl}/conversations/${conversationId}/messages`, {
+                headers: this.headers
+            });
+            return response.data;
+        } catch (error) {
+            console.error(`[Gallabox] Fetch Messages Failed for ${conversationId}:`, error.response?.data || error.message);
+            return [];
+        }
     }
 }
 

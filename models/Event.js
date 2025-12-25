@@ -13,7 +13,7 @@ const EventSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['bot_sent', 'user_replied', 'stage_change', 'site_visit', 'booking']
+        enum: ['bot_sent', 'user_replied', 'stage_change', 'site_visit_scheduled', 'site_visit_done', 'booking', 'prebooking', 'direct_booking', 'mql', 'sql']
     },
     timestamp: {
         type: Date,

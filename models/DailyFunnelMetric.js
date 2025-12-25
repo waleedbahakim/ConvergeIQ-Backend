@@ -16,6 +16,29 @@ const DailyFunnelMetricSchema = new mongoose.Schema({
     ql: { type: Number, default: 0 },
     sv: { type: Number, default: 0 },
     bookings: { type: Number, default: 0 },
+    mql: { type: Number, default: 0 },
+    sql: { type: Number, default: 0 },
+    sv_scheduled: { type: Number, default: 0 },
+    sv_done: { type: Number, default: 0 },
+    prebookings: { type: Number, default: 0 },
+    direct_bookings: { type: Number, default: 0 },
+
+    // AI Intelligence Aggregates
+    drop_reasons: {
+        type: Map,
+        of: Number,
+        default: {}
+    },
+    intent_distribution: {
+        type: Map,
+        of: Number,
+        default: {}
+    },
+    sentiment_distribution: {
+        type: Map,
+        of: Number,
+        default: {}
+    },
 
     // Percentages (Pre-calculated or calculated on fly? Storing helps history)
     funnel_percentages: {

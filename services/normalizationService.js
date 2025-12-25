@@ -42,6 +42,13 @@ exports.normalizeAndSave = async (client_id, payload) => {
             { upsert: true, new: true }
         );
 
+        const eventBus = require('./eventBus'); // Require here to avoid circular dep issues if any
+        eventBus.emitEvent(eventBus.events.CHAT_MESSAGE_RECEIVED, {
+            client_id,
+            message: dbMsg,
+            conversation_id: dbConv._id
+        });
+
         return dbMsg;
 
     } catch (error) {
